@@ -1,0 +1,84 @@
+/* Full-page wrapper with background */
+html, body {
+    height: 100%;
+    width: 100%;
+
+    margin: 0;
+    padding: 0;
+    background-color: #bbb4b4;
+    font-family: Arial, sans-serif;
+}
+
+.page-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 50px;
+    min-height: 100%;
+}
+
+/* Floating card style for contact form */
+.profile-container {
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding: 30px;
+    width: 100%; 
+    max-width: 900px;
+    margin-bottom: 40px;
+    margin-left: 100px;
+    margin-right: 100px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+    transition: all 0.3s ease;
+    text-align: left;
+}
+
+/* Headings */
+.profile-container h2 {
+    color: #2c3e50;
+}
+
+/* Paragraph text */
+.profile-container p {
+    color: #555;
+}
+
+/* Labels */
+.form-label {
+    font-weight: 600;
+    color: #444;
+    display: block;
+    margin-bottom: 6px;
+}
+
+/* Inputs & Textarea */
+.profile-input {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+/* Textarea adjustments */
+.profile-input[type="textarea"], textarea.profile-input {
+    resize: vertical;
+}
+
+/* Button styling */
+.btn-success {
+    background-color: #28a745;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+}

@@ -1,0 +1,131 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/cart.css' %}" />
+
+<div class="container py-5"> 
+
+    <!-- Boxed Heading (DO NOT TOUCH) -->
+    <div class="market-heading-wrapper mb-4">
+        <h2 class="market-heading">Your Cart</h2>
+    </div>
+
+    {% if cart_products %}
+
+    <!-- FLOATING CART CARD -->
+    <div class="floating-cart">
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th style="text-align: center;">Quantity</th>
+                            <th class="text-center">Price</th>
+                            <th class="text-center">Total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in cart_products %}
+                        <tr>
+                            <td class="col-md-6">
+                                <div class="media d-flex align-items-center">
+                                    <a class="thumbnail me-3" href="#">
+                                        {% if product.image %}
+                                            <img src="{{ product.image.url }}" style="width: 72px; height: 72px;">
+                                        {% else %}
+                                            <img src="{% static 'default-product.png' %}" style="width: 72px; height: 72px;">
+                                        {% endif %}
+                                    </a>
+                                    <div class="media-body">
+                                        <h4 class="media-heading">{{ product.name }}</h4>
+                                        <p>{{ product.about|truncatechars:50 }}</p>
+                                        <small class="text-success">In Stock</small>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td class="text-center" style="vertical-align: middle;">
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <a href="{% url 'update_cart' product.id %}?action=subtract"
+                                       class="btn btn-outline-secondary btn-sm me-2">−</a>
+
+                                    <span style="min-width: 30px; text-align: center;">
+                                        {{ product.quantity }}
+                                    </span>
+
+                                    <a href="{% url 'update_cart' product.id %}?action=add"
+                                       class="btn btn-outline-secondary btn-sm ms-2">+</a>
+                                </div>
+                            </td>
+
+                            <td class="text-center" style="vertical-align: middle;">
+                                <strong>₹{{ product.price }}</strong>
+                            </td>
+
+                            <td class="text-center" style="vertical-align: middle;">
+                                <strong>₹{{ product.total_price }}</strong>
+                            </td>
+
+                            <td class="text-center" style="vertical-align: middle;">
+                                <form method="post" action="{% url 'remove_from_cart' product.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        Remove
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                        <tr>
+                            <td colspan="3"></td>
+                            <td><h5>Subtotal</h5></td>
+                            <td><h5><strong>₹{{ total_price }}</strong></h5></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="3"></td>
+                            <td><h5>Shipping</h5></td>
+                            <td><h5><strong>₹0.00</strong></h5></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="3"></td>
+                            <td><h3>Total</h3></td>
+                            <td><h3><strong>₹{{ total_price }}</strong></h3></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="3"></td>
+                            <td>
+                                <a href="{% url 'digital_market' %}" class="btn btn-secondary">
+                                    Continue Shopping
+                                </a>
+                            </td>
+                            <td>
+                                <form method="post" action="{% url 'checkout' %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success">
+                                        Checkout
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+        <div class="alert alert-info text-center">
+            Your cart is currently empty.
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}

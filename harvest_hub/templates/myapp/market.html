@@ -1,0 +1,102 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/market.css' %}" />
+
+<div class="container py-5">
+
+    <!-- Floating card for the heading -->
+    <div class="floating-card">
+       <h2 style="font-weight: 545;" class="mb-0">Digital Market</h2>
+    </div>
+
+    <!-- Notification container -->
+    <div id="notification" class="alert alert-success text-center" style="display:none;">
+        Item added to cart!
+    </div>
+
+    {% if products.exists %}
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        {% for product in products %}
+        <div class="col">
+            <div class="card h-100 shadow-floating">
+                {% if product.image and product.image.url %}
+                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                {% else %}
+                    <img src="{% static 'images/default-product.png' %}" class="card-img-top" alt="No Image">
+                {% endif %}
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="card-text">{{ product.about }}</p>
+                    <p class="text-success fw-bold">₹{{ product.price }} / kg</p>
+
+                    <form method="post" class="add-to-cart-form mt-auto" data-product-id="{{ product.id }}">
+                        {% csrf_token %}
+                        <div class="input-group mb-3">
+                            <input type="number" name="quantity" class="form-control" value="1" min="1" style="max-width: 80px;">
+                            <button type="submit" class="btn btn-success">Add to Cart</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+        <p class="text-center mt-4">No products available yet.</p>
+    {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const forms = document.querySelectorAll('.add-to-cart-form');
+    const notification = document.getElementById('notification');
+
+    forms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const productId = this.dataset.productId;
+            const quantity = this.querySelector('input[name="quantity"]').value;
+            const csrfToken = this.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            fetch("{% url 'add_to_cart' 0 %}".replace('0', productId), {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'quantity': quantity
+                })
+            })
+            .then(response => {
+                if(response.ok) {
+                    showNotification('Item added to cart!');
+                    this.querySelector('input[name="quantity"]').value = 1;
+                } else {
+                    showNotification('Failed to add item to cart.', 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Error adding item to cart.', 'danger');
+            });
+        });
+    });
+
+    function showNotification(message, type='success') {
+        notification.textContent = message;
+        notification.className = `alert alert-${type} text-center`;
+        notification.style.display = 'block';
+
+        setTimeout(() => {
+            notification.style.display = 'none';
+        }, 2500);
+    }
+});
+</script>
+
+{% endblock %}

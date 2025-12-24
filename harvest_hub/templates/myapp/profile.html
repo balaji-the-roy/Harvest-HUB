@@ -1,0 +1,166 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}" />
+<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+
+<div class="profile-container text-center">
+    <h2 class="mb-4">My Profile</h2>
+
+    <!-- Profile Picture -->
+    {% if user.profile.image and user.profile.image.url %}
+        <img src="{{ user.profile.image.url }}" alt="Profile Picture" class="profile-pic" id="profilePic">
+    {% else %}
+        <img src="{% static 'images/default-profile.png' %}" alt="Default Profile Picture" class="profile-pic" id="profilePic">
+    {% endif %}
+
+    <!-- Profile Form -->
+    <form method="post" action="{% url 'profile' %}" enctype="multipart/form-data" id="profileForm">
+        {% csrf_token %}
+        <input type="file" name="image" id="profileImageInput" accept="image/*" style="display:none;">
+
+        <table class="profile-table text-start">
+            <tr>
+                <th>Name:</th>
+                <td>
+                    <span class="text-view">{{ user.first_name }}</span>
+                    <input type="text" name="first_name" class="profile-input input-edit" value="{{ user.first_name }}" style="display:none;">
+                </td>
+            </tr>
+            <tr>
+                <th>Username:</th>
+                <td>
+                    <span class="text-view">{{ user.username }}</span>
+                    <!-- Username not editable -->
+                </td>
+            </tr>
+            <tr>
+                <th>Email:</th>
+                <td>
+                    <span class="text-view">{{ user.email }}</span>
+                    <input type="email" name="email" class="profile-input input-edit" value="{{ user.email }}" style="display:none;">
+                </td>
+            </tr>
+            <tr>
+                <th>Mobile:</th>
+                <td>
+                    <span class="text-view">{{ user.profile.mobile }}</span>
+                    <input type="text" name="mobile" class="profile-input input-edit" value="{{ user.profile.mobile }}" style="display:none;">
+                </td>
+            </tr>
+            <tr>
+                <th>Address:</th>
+                <td>
+                    <span class="text-view">{{ user.profile.address }}</span>
+                    <textarea name="address" class="profile-input input-edit" style="display:none;" rows="3">{{ user.profile.address }}</textarea>
+                </td>
+            </tr>
+            <tr>
+                <th>Category:</th>
+                <td>
+                    <span class="text-view">{{ user.profile.category }}</span>
+                    <select name="category" class="profile-input input-edit" style="display:none;">
+                        <option value="">Select Category</option>
+                        <option value="Farmer" {% if user.profile.category == "Farmer" %}selected{% endif %}>Farmer</option>
+                        <option value="Buyer" {% if user.profile.category == "Buyer" %}selected{% endif %}>Buyer</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+
+        <div class="btn-group mt-3">
+            <button type="button" id="editBtn" class="btn btn-warning">Edit</button>
+            <button type="submit" id="saveBtn" class="btn btn-success" style="display:none;">Save Changes</button>
+            <button type="button" id="cancelBtn" class="btn btn-secondary" style="display:none;">Cancel</button>
+        </div>
+    </form>
+</div>
+
+{% if user.profile.category == "Farmer" %}
+<!-- Products You Are Selling Section -->
+<div class="products-section mt-5">
+    <h3>Products You Are Selling</h3>
+    {% if user.products.exists %}
+        {% for product in user.products.all %}
+            <div class="product-item d-flex justify-content-between align-items-center p-2 border mb-2" id="product-{{ product.id }}">
+                <div>
+                    <span class="product-name fw-bold">{{ product.name }}</span>
+                    <span class="product-price text-success fw-bold ms-2">₹{{ product.price }}</span>
+                </div>
+                <button class="btn btn-danger btn-sm btn-delete-product" data-product-id="{{ product.id }}">Delete</button>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p><em>No products uploaded yet.</em></p>
+    {% endif %}
+    <a href="{% url 'upload_product' %}" class="btn btn-primary btn-upload-product mt-3">Upload Product</a>
+</div>
+{% endif %}
+
+<script>
+    const editBtn = document.getElementById('editBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const profileImageInput = document.getElementById('profileImageInput');
+
+    editBtn.addEventListener('click', () => {
+        toggleEdit(true);
+    });
+
+    cancelBtn.addEventListener('click', () => {
+        toggleEdit(false);
+        document.querySelectorAll('.input-edit').forEach(input => {
+            const span = input.closest('td').querySelector('.text-view');
+            if(span) {
+                input.value = span.textContent.trim();
+            }
+        });
+        profileImageInput.value = '';
+    });
+
+    function toggleEdit(editMode) {
+        document.querySelectorAll('.text-view').forEach(el => {
+            el.style.display = editMode ? 'none' : 'inline';
+        });
+        document.querySelectorAll('.input-edit').forEach(el => {
+            el.style.display = editMode ? 'inline-block' : 'none';
+        });
+        editBtn.style.display = editMode ? 'none' : 'inline-block';
+        saveBtn.style.display = editMode ? 'inline-block' : 'none';
+        cancelBtn.style.display = editMode ? 'inline-block' : 'none';
+        profileImageInput.style.display = editMode ? 'block' : 'none';
+    }
+
+    // Product Delete Logic
+    document.querySelectorAll('.btn-delete-product').forEach(button => {
+        button.addEventListener('click', function() {
+            const productId = this.getAttribute('data-product-id');
+            if(confirm('Are you sure you want to delete this product?')) {
+                fetch("{% url 'delete_product' 0 %}".replace('0', productId), {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({}),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.success) {
+                        const productDiv = document.getElementById('product-' + productId);
+                        if(productDiv) productDiv.remove();
+                    } else {
+                        alert('Failed to delete product. Please try again.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error deleting product.');
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

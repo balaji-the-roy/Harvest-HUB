@@ -1,0 +1,49 @@
+.upload-container {
+        max-width: 600px;
+        margin: 40px auto;
+        background: #fff;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        font-family: Arial, sans-serif;
+    }
+
+    .upload-container h2 {
+        margin-bottom: 20px;
+        color: #2c3e50;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #444;
+    }
+
+    .form-control, .form-textarea, .form-select {
+        width: 100%;
+        padding: 8px 12px;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        box-sizing: border-box;
+    }
+
+    .form-textarea {
+        resize: vertical;
+        height: 120px;
+    }
+
+    .btn-submit {
+        background-color: #28a745;
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-submit:hover {
+        background-color: #218838;
+    }

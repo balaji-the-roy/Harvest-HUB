@@ -1,0 +1,130 @@
+/* Full-page wrapper with background */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #bbb4b4; /* THIS IS THE GAME CHANGER*/
+    font-family: Arial, sans-serif;
+}
+
+.page-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 50px;
+    min-height: 100%;
+}
+
+/* Floating card style */
+.profile-container, .products-section {
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding: 30px;
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 40px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+    transition: all 0.3s ease;
+}
+
+/* Profile picture */
+.profile-pic {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+}
+
+/* Table styling */
+table.profile-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table.profile-table th,
+table.profile-table td {
+    padding: 10px 15px;
+    vertical-align: top;
+}
+
+table.profile-table th {
+    width: 30%;
+    text-align: left;
+    font-weight: 600;
+    color: #444;
+}
+
+table.profile-table td {
+    width: 70%;
+    color: #333;
+}
+
+input.profile-input, select.profile-input, textarea.profile-input {
+    width: 100%;
+    padding: 6px 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+/* Button group */
+.btn-group {
+    margin-top: 20px;
+}
+
+#saveBtn {
+    margin-right: 10px;
+}
+
+#profileImageInput {
+    display: none;
+    margin-bottom: 15px;
+}
+
+/* Products Section */
+.products-section {
+    padding: 25px 30px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+}
+
+.products-section h3 {
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+.product-item {
+    padding: 10px 15px;
+    background: #f8f8f8;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.05);
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.product-name {
+    font-weight: 600;
+    color: #34495e;
+}
+
+.btn-delete-product {
+    background-color: #e74c3c;
+    border: none;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-delete-product:hover {
+    background-color: #c0392b;
+}
+
+/* Editing input spacing */
+.input-edit {
+    margin-top: 5px;
+}

@@ -1,0 +1,169 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+
+<div class="background-section">
+  <div class="overlay"></div>
+
+  <!-- HERO SECTION CENTERED -->
+  <div class="background-overlay d-flex flex-column justify-content-center align-items-center text-center">
+
+    {% if user.is_authenticated %}
+
+        {% if user.profile.category == "Farmer" %}
+            <div class="banner-inner">
+                <h1 class="title-large mb-3">Welcome to Harvest Hub — Your Market, Your Price.</h1>
+                <p class="text-base hero-text">
+                    We built this platform to empower farmers like you. Here, you can sell your crops directly 
+                    to customers without losing your hard-earned income to middlemen. Set your own prices, 
+                    showcase your produce, and reach a wider market with full transparency and control. 
+                    Our goal is to support your growth, strengthen agriculture, and ensure you receive the 
+                    respect and fair value you truly deserve.
+                </p>
+            </div>
+
+        {% elif user.profile.category == "Buyer" %}
+            <div class="banner-inner">
+                <h1 class="title-large mb-3">Welcome to Harvest Hub — Fresh Produce, Straight from Farmers.</h1>
+                <p class="text-base hero-text">
+                    Our platform connects you directly with the farmers who grow your food. No middlemen, 
+                    no inflated prices—just honest, fresh produce delivered with trust and transparency. 
+                    By buying here, you not only get high-quality farm products but also support farmers and 
+                    contribute to a fair, sustainable agricultural system. Shop confidently knowing your 
+                    choices make a real difference.
+                </p>
+            </div>
+
+        {% else %}
+            <div class="banner-inner">
+                <h1 class="title-large mb-3">Welcome, {{ user.first_name }}!</h1>
+                <p class="text-base hero-text">
+                    Explore our platform designed to empower farmers and provide customers with fresh, fair,
+                    and transparent access to agricultural products.
+                </p>
+            </div>
+        {% endif %}
+
+    {% else %}
+        <div class="banner-inner">
+            <h1 class="title-large mb-3">Welcome to Harvest Hub</h1>
+            <p class="text-base hero-text">
+                A platform built to connect farmers and customers directly — promoting fair pricing, 
+                fresh produce, and a sustainable agricultural system without middlemen.
+            </p>
+
+            <div class="button-group d-flex justify-content-center gap-3 flex-wrap mt-3">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#registerModal">Register</button>
+            </div>
+        </div>
+    {% endif %}
+
+  </div>
+</div>
+
+<!-- Login Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-md modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="loginModalLabel">Login</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{% url 'login' %}">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="usernameLogin" class="form-label">Username</label>
+            <input type="text" name="username" id="usernameLogin" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="passwordLogin" class="form-label">Password</label>
+            <input type="password" name="password" id="passwordLogin" class="form-control" required>
+          </div>
+          <div class="text-center">
+            <button type="submit" class="btn btn-primary">Log In</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Register Modal -->
+<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" id="registerModalLabel">Register / Signup</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <form method="post" action="{% url 'register' %}">
+          {% csrf_token %}
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="name" class="form-label">Name</label>
+              <input type="text" name="name" id="name" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+              <label for="username" class="form-label">User Name</label>
+              <input type="text" name="username" id="username" class="form-control" required>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="mobile" class="form-label">Mobile Number</label>
+              <input type="text" name="mobile" id="mobile" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" name="email" id="email" class="form-control" required>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="password1" class="form-label">Password</label>
+              <input type="password" name="password1" id="password1" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+              <label for="password2" class="form-label">Retype Password</label>
+              <input type="password" name="password2" id="password2" class="form-control" required>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="address" class="form-label">Address</label>
+            <textarea name="address" id="address" rows="3" class="form-control" required></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label d-block">Category:</label>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="category" id="farmer" value="Farmer" required>
+              <label class="form-check-label" for="farmer">Farmer</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="category" id="buyer" value="Buyer" required>
+              <label class="form-check-label" for="buyer">Buyer</label>
+            </div>
+          </div>
+
+          <div class="text-center">
+            <button type="submit" class="btn btn-success me-2">Submit</button>
+            <button type="reset" class="btn btn-secondary">Reset</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
